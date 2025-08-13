@@ -1,0 +1,10 @@
+/.editorconfig
+/.vscode
+/arrays.o
+/DataDiagrams.o
+/dd
+/linkedlists.o
+/output.txt
+/stacknqueue.o
+/structs.o
+/trees.o
