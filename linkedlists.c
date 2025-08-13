@@ -122,7 +122,7 @@ int linked_list(int quantity, char material, char rngFill, int largestVal, FILE 
 // Creates the "aol" 'dType'
 int arr_of_linked_lists(int quantity, char material, char rngFill, int largestVal, FILE **ofp)
 {
-   //
+   // TODO
 
    return 0;
 }

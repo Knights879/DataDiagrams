@@ -1,0 +1,29 @@
+# EditorConfig files make maintaining style easy for larger projects
+# that have multiple developers working together. The rules defined
+# here will override your editors default styling rules for all files
+# in the project, so that everyone is on the same page.
+
+# Top-most EditorConfig file
+root = true
+
+# For every file
+[*]
+# Which style of newline to use
+end_of_line = crlf
+# Insert a newline at the end of the file
+insert_final_newline = true
+
+# For every C file and H file
+[*.{c, h}]
+# Set default charset
+charset = utf-8
+# 3 space indentation
+indent_style = space
+indent_size = 3
+# Trim trailing whitespace
+trim_trailing_whitespace = true
+
+# For the makefile
+[makefile]
+# Tab indent
+indent_style = tab
