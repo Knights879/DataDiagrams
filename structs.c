@@ -149,7 +149,16 @@ int struct_node(int quantity, char material, char rngFill, int largestVal, FILE 
 
    /* Step 1: Determine the values for the variables defined above */
 
+   // Calculate 'decPlaces'
    decPlaces = find_dec_places(largestVal);
+   // The minimum is 4 because:
+   //   - the potential negative sign
+   //   - one digit minimum for the whole number part
+   //   - the period
+   //   - one digit minimum for the decimal/fraction part
+   if (decPlaces < 4)
+      decPlaces = 4;
+
 
    // Null-initialize 'names'
    for (i = 0; i < MAX_NUM_CUSTOM_STRUCT_NAMES; i++)
@@ -226,7 +235,7 @@ int struct_node(int quantity, char material, char rngFill, int largestVal, FILE 
       decision = 0;
 
       // If manual, ask user to input values
-      if (rngFill == 'm')
+      if (rngFill == 'y')
       {
          int maxVal = 1;  // the maximum value represented by 'decPlaces' digits
          int minVal = 1;  // the minimum value represented by 'decPlaces' digits
@@ -237,7 +246,7 @@ int struct_node(int quantity, char material, char rngFill, int largestVal, FILE 
          // Calculate 'maxVal'
          for (i = 0; i < decPlaces; i++)
             maxVal *= 10;
-         maxVal -= 1;
+         maxVal--;
          // Calculate 'minVal'
          for (i = 0; i < decPlaces - 1; i++)
             minVal *= 10;
@@ -429,7 +438,7 @@ int struct_node(int quantity, char material, char rngFill, int largestVal, FILE 
                chars[i] = tempChar;
          }
       }
-      else  // 'rngFill' == ', randomly generate them
+      else  // 'rngFill' == 'n', so randomly generate them
       {
          names[0] = (char *)malloc(sizeof(char) * MAX_CUSTOM_STRUCT_NAME_LEN + 1);
          if (names[0] == NULL)  // Check that malloc() worked
@@ -470,7 +479,7 @@ int struct_node(int quantity, char material, char rngFill, int largestVal, FILE 
                snprintf(names[i + 4], sizeof(char) * 6, "data%d", i + 1);
 
                // Generate the value for the double variable
-               dubs[i] = (double)get_rand_int(largestVal / 100);  // FIXME: Temp solution
+               dubs[i] = get_rand_dub(decPlaces);
             }
             if (chars[i] != CHAR_MIN)
             {

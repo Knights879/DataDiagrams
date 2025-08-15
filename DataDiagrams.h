@@ -104,7 +104,9 @@ char get_rand_alpha(void);
 // Returns a random printable character
 char get_rand_printable(void);
 // Returns a random string from "NAMES" (see declaration above)
-char * get_rand_string(void);
+const char * get_rand_string(void);
+// Returns a random double
+double get_rand_dub(int);
 // Find the number of decimal places of a given value
 int find_dec_places(int);
 // Finds the length of a double

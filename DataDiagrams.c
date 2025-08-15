@@ -6,7 +6,7 @@
 #include "DataDiagrams.h"
 
 // Pre-defined list of names
-char *NAMES[NUM_NAMES] = {
+const char *NAMES[NUM_NAMES] = {
    "Arya", "Bran", "Jon", "Rickon", "Robb", "Sansa", "Eddard",
    "Catelyn", "Dany", "Tyrion", "Bronn", "Jaime", "Cersei",
    "Petyr", "Varys", "Sandor", "Robert", "Tormund", "Samwell",
@@ -71,15 +71,102 @@ char get_rand_printable()
 }
 
 // Returns a random string from "NAMES" (see top of file)
-char * get_rand_string()
+const char * get_rand_string()
 {
    return NAMES[rand() % NUM_NAMES];
 }
 
 // Returns a random double
-int get_rand_dub(int largestVal, int decPlaces)
+double get_rand_dub(int decPlaces)
 {
-   return rand() % (largestVal + 1);
+   int i;   // index in for loops
+   int sign;   // determines whether the random double will be positive or negative
+   int whole;  // represents the digits to the left of the decimal/period
+   int wholeSize;  // represents the number of digits to the left of the decimal/period
+   int decimal;    // represents the digits to the right of the decimal/period
+   int decimalSize;  // represents the number of digits to the right of the decimal/period
+   int maxVal = 1;   // stores the largest value allowed for 'whole' and then 'decimal'
+   int tempDecP = decPlaces;  // stores the amount of 'decPlaces' currently available for use
+   char tempStr[decPlaces + 1];  // used to convert the parts of the random double into 'randDub'
+   double randDub;   // the randomly generated double to be returned
+
+   // STEP 1: determine if the number will be positive or negative.
+   // Let's make positive more likely (1 in 4), just because
+   // If sign == 0, it's negative
+   // If sign == 1, 2, or 3, it's positive
+   sign = get_rand_int(3);
+
+   // Now we need to update 'tempDecP'
+   if (sign == 0)
+      tempDecP -= 3;  // If sign is negative, we have one less space to use
+   else  // sign == 1, 3, or 3
+      tempDecP -= 2;
+
+   // And now we can update 'maxVal'
+   for (i = 0; i < tempDecP; i++)
+      maxVal *= 10;
+   maxVal--;
+
+   // STEP 2: Generate the whole number part.
+   whole = get_rand_int(maxVal);
+   wholeSize = find_dec_places(whole);
+
+   // Now we need to update 'tempDecP' again
+   if (sign == 0)
+      tempDecP = decPlaces - wholeSize - 2;
+   else  // sign == 1, 2, or 3
+      tempDecP = decPlaces - wholeSize - 1;
+
+   // And now we can update 'maxVal' again
+   maxVal = 1;  // Reset 'maxVal' so it can be updated correctly
+   for (i = 0; i < tempDecP; i++)
+      maxVal *= 10;
+   maxVal--;
+
+   // STEP 3: Generate the decimal/fraction part.
+   decimal = get_rand_int(maxVal);
+   decimalSize = find_dec_places(decimal);
+
+   // STEP 4: Create the string from the sign, 'whole', decimal/period, and 'decimal' parts
+   if (sign == 0)
+   {
+      if (wholeSize + decimalSize + 2 > decPlaces)
+         return 1.1;
+
+      snprintf(tempStr, sizeof(tempStr), "-%d.%d", whole, decimal);
+   }
+   else  // sign == 1, 2, or 3
+   {
+      if (wholeSize + decimalSize + 1 > decPlaces)
+         return 1.1;
+
+      snprintf(tempStr, sizeof(tempStr), "%d.%d", whole, decimal);
+   }
+
+   // STEP 5: Convert the string to a double
+   randDub = strtod(tempStr, NULL);
+
+   // Check just to make sure
+   if (find_dec_places(randDub) > decPlaces)
+      return 1.1;
+
+   /* Collapsable comment so you can clear up this space on your screen
+   // A simpler way to do it, but doesn't control the "size" of the number
+   // NOTE: To use this method, you would need to pass 'largestVal' to the function
+
+   // int i;
+   // double lower = 1;
+   // double upper = largestVal;
+   // double randDub;
+
+   // for (i = 0; i < decPlaces - 1; i++)
+   //    lower *= 10;
+   // lower = 0 - (lower - 1);
+
+   // // l + (u - l) * (rand() % largestVal) / largestVal
+   // randDub = lower + (upper - lower) * get_rand_int(largestVal) / largestVal; */
+
+   return randDub;
 }
 
 // Finds the number of decimal places of a value
@@ -273,6 +360,7 @@ int main(int argc, char **argv)
    srand(time(NULL));
 
    // Check for help call
+   // NOTE: 'argv[0]' is the name of the executable
    if (argc > 1)
    {
       if (strcmp(argv[1], "help") == 0)
